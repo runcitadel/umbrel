@@ -20,8 +20,9 @@ cat <<EOF > "$UMBREL_ROOT"/statuses/update-status.json
 {"state": "installing", "progress": 95, "description": "Removing backup"}
 EOF
 [[ -d "$UMBREL_ROOT"/.umbrel-backup ]] && rm -rf "$UMBREL_ROOT"/.umbrel-backup
+[[ -d "$UMBREL_ROOT"/.citadel-backup ]] && rm -rf "$UMBREL_ROOT"/.citadel-backup
 
-echo "Successfully installed Umbrel $RELEASE"
+echo "Successfully prepared for Citadel migration"
 cat <<EOF > "$UMBREL_ROOT"/statuses/update-status.json
-{"state": "success", "progress": 100, "description": "Successfully installed Umbrel $RELEASE", "updateTo": ""}
+{"state": "installing", "progress": 99, "description": "You can now shut down your Raspberry Pi ('sudo shutdown now' via SSH) and flash Citadel.", "updateTo": ""}
 EOF

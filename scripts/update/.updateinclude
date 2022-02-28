@@ -3,3 +3,4 @@ bitcoin/bitcoin.conf
 tor/torrc-server
 tor/torrc-proxy
 electrs/electrs.toml
+.citadel

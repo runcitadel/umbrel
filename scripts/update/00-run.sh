@@ -4,7 +4,10 @@ set -euo pipefail
 RELEASE=$1
 UMBREL_ROOT=$2
 
-./check-memory "${RELEASE}" "${UMBREL_ROOT}" "firstrun"
+# Check if $UMBREL_ROOT/.umbrel-$RELEASE exists, if it does, rename it to $UMBREL_ROOT/.citadel-$RELEASE
+if [ -d "$UMBREL_ROOT/.umbrel-$RELEASE" ]; then
+    mv "$UMBREL_ROOT/.umbrel-$RELEASE" "$UMBREL_ROOT/.citadel-$RELEASE"
+fi
 
 echo
 echo "======================================="
@@ -14,14 +17,17 @@ echo "========= Stage: Pre-update ==========="
 echo "======================================="
 echo
 
+# Stop karen early
+pkill -f "\./karen" || true
+
 # Make sure any previous backup doesn't exist
-if [[ -d "$UMBREL_ROOT"/.umbrel-backup ]]; then
-    echo "Cannot install update. A previous backup already exists at $UMBREL_ROOT/.umbrel-backup"
+if [[ -d "$UMBREL_ROOT"/.citadel-backup ]]; then
+    echo "Cannot install update. A previous backup already exists at $UMBREL_ROOT/.citadel-backup"
     echo "This can only happen if the previous update installation wasn't successful"
     exit 1
 fi
 
-echo "Installing Umbrel $RELEASE at $UMBREL_ROOT"
+echo "Installing Citadel $RELEASE at $UMBREL_ROOT"
 
 # Update status file
 cat <<EOF > "$UMBREL_ROOT"/statuses/update-status.json
@@ -36,9 +42,9 @@ find "$UMBREL_ROOT" -path "$UMBREL_ROOT/app-data" -prune -o -exec chown 1000:100
 echo "Backing up existing directory tree"
 
 rsync -av \
-    --include-from="$UMBREL_ROOT/.umbrel-$RELEASE/scripts/update/.updateinclude" \
-    --exclude-from="$UMBREL_ROOT/.umbrel-$RELEASE/scripts/update/.updateignore" \
+    --include-from="$UMBREL_ROOT/.citadel-$RELEASE/scripts/update/.updateinclude" \
+    --exclude-from="$UMBREL_ROOT/.citadel-$RELEASE/scripts/update/.updateignore" \
     "$UMBREL_ROOT"/ \
-    "$UMBREL_ROOT"/.umbrel-backup/
+    "$UMBREL_ROOT"/.citadel-backup/
 
-echo "Successfully backed up to $UMBREL_ROOT/.umbrel-backup"
+echo "Successfully backed up to $UMBREL_ROOT/.citadel-backup"

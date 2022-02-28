@@ -38,14 +38,14 @@ if [[ ! -z "${UMBREL_OS:-}" ]]; then
     fi
 
     # Update SD card installation
-    if  [[ -f "${SD_CARD_UMBREL_ROOT}/.umbrel" ]]; then
+    if  [[ -f "${SD_CARD_UMBREL_ROOT}/.citadel" ]]; then
         echo "Replacing ${SD_CARD_UMBREL_ROOT} on SD card with the new release"
         rsync --archive \
             --verbose \
-            --include-from="${UMBREL_ROOT}/.umbrel-${RELEASE}/scripts/update/.updateinclude" \
-            --exclude-from="${UMBREL_ROOT}/.umbrel-${RELEASE}/scripts/update/.updateignore" \
+            --include-from="${UMBREL_ROOT}/.citadel-${RELEASE}/scripts/update/.updateinclude" \
+            --exclude-from="${UMBREL_ROOT}/.citadel-${RELEASE}/scripts/update/.updateignore" \
             --delete \
-            "${UMBREL_ROOT}/.umbrel-${RELEASE}/" \
+            "${UMBREL_ROOT}/.citadel-${RELEASE}/" \
             "${SD_CARD_UMBREL_ROOT}/"
 
         echo "Fixing permissions"
@@ -77,7 +77,7 @@ if [[ ! -z "${UMBREL_OS:-}" ]]; then
     fi
 
     # This makes sure systemd services are always updated (and new ones are enabled).
-    UMBREL_SYSTEMD_SERVICES="${UMBREL_ROOT}/.umbrel-${RELEASE}/scripts/umbrel-os/services/*.service"
+    UMBREL_SYSTEMD_SERVICES="${UMBREL_ROOT}/.citadel-${RELEASE}/scripts/umbrel-os/services/*.service"
     for service_path in $UMBREL_SYSTEMD_SERVICES; do
       service_name=$(basename "${service_path}")
       install -m 644 "${service_path}" "/etc/systemd/system/${service_name}"
@@ -90,7 +90,7 @@ cat <<EOF > "$UMBREL_ROOT"/statuses/update-status.json
 EOF
 
 # Checkout to the new release
-cd "$UMBREL_ROOT"/.umbrel-"$RELEASE"
+cd "$UMBREL_ROOT"/.citadel-"$RELEASE"
 
 # Configure new install
 echo "Configuring new release"
@@ -212,10 +212,10 @@ fi
 echo "Overlaying $UMBREL_ROOT/ with new directory tree"
 rsync --archive \
     --verbose \
-    --include-from="$UMBREL_ROOT/.umbrel-$RELEASE/scripts/update/.updateinclude" \
-    --exclude-from="$UMBREL_ROOT/.umbrel-$RELEASE/scripts/update/.updateignore" \
+    --include-from="$UMBREL_ROOT/.citadel-$RELEASE/scripts/update/.updateinclude" \
+    --exclude-from="$UMBREL_ROOT/.citadel-$RELEASE/scripts/update/.updateignore" \
     --delete \
-    "$UMBREL_ROOT"/.umbrel-"$RELEASE"/ \
+    "$UMBREL_ROOT"/.citadel-"$RELEASE"/ \
     "$UMBREL_ROOT"/
 
 # Remove legacy electrs dir
